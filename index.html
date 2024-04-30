@@ -1,46 +1,21 @@
-<!doctype html>
+(async function() {
+    const url = 'your-pdf-url.pdf'; // 여기에 실제 PDF 파일 URL을 입력하세요
+    const loadingTask = pdfjsLib.getDocument(url);
+    const pdf = await loadingTask.promise;
 
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>HTML Example</title>
-  
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/about.css">
-</head>
-<body>
-  <section class="center">
-    <aside class="sidebar"></aside>
-    
-    <section class="contents">
-      <!-- page will be include here -->
-      <section id="page" class="page">
-        <section id="about">
-          <section class="frame">
-            <h2><b>HELLO</b>WORLD</h2>
-            
-            <div class="cat">
-              <div class="picture">
-                <img src="images/mew.png" alt="Mew">
-              </div>
-              <small>Mew</small>
-            </div>
-            <div class="cat">
-              <div class="picture">
-                <img src="images/siesta.png" alt="Siesta">
-              </div>
-              <small>Siesta</small>
-            </div>
-            <div class="cat">
-              <div class="picture">
-                <img src="images/tiger.png" alt="Tiger">
-              </div>
-              <small>Tiger</small>
-            </div>
-          </section>
-        </section>
-      </section>
-    </section>
-  </section>
-</body>
-</html>
+    const canvas = document.getElementById('pdf-render');
+    const ctx = canvas.getContext('2d');
+    const pageNumber = 1; // 렌더링할 페이지 번호
+    const page = await pdf.getPage(pageNumber);
+
+    const scale = 1.5; // 확대 배율
+    const viewport = page.getViewport({ scale });
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+
+    const renderContext = {
+        canvasContext: ctx,
+        viewport: viewport
+    };
+    await page.render(renderContext).promise;
+})();
